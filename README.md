@@ -10,14 +10,14 @@ The `virtualenv` tool can be installed through `pip`. This will allow you to man
 $ sudo python3 -m pip install virtualenv
 ```
 
-A new virtual environment can be created by giving `.env` the name of your virtual environment as a command line parameter. In this example, we are calling our environment `.env`.
+A new virtual environment can be created by giving `venv` the name of your virtual environment as a command line parameter. In this example, we are calling our environment `venv`.
 ```bash
-$ virtualenv .env
+$ python3 -m venv venv
 ```
 
 Next we will have to activate our newly created environment.
 ```bash
-$ source .env/bin/activate
+$ source venv/bin/activate
 ```
 
 Once activated, dependencies of the project will need to be installed. All dependencies are stored in the `requirements.txt` file, so this will need to be passed to `pip`.
