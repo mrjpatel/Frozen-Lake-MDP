@@ -4,7 +4,7 @@
 import numpy as np
 import gym
 import time
-from lake_envs import *
+import rmit_rl_env
 
 np.set_printoptions(precision=3)
 
