@@ -46,47 +46,54 @@ def policy_evaluation(P, nS, nA, policy, gamma=0.9, tol=1e-3):
 		The policy to evaluate. Maps states to actions.
 	tol: float
 		Terminate policy evaluation when
-		max |value_function(s) - prev_value_function(s)| < tol
+		max |valueFunction(s) - prev_valueFunction(s)| < tol
 	Returns
 	-------
-	value_function: np.ndarray[nS]
-		The value function of the given policy, where value_function[s] is
+	valueFunction: np.ndarray[nS]
+		The value function of the given policy, where valueFunction[s] is
 		the value of state s
 	"""
 
-	############################
-	# YOUR IMPLEMENTATION HERE #
 	valueFunction = np.zeros(nS)
 	newValueFunction = valueFunction.copy()
+
 	maxIterations = 100 #The maximum amount of iterations performed before we stop.
 	iterCounter = 0 #Counts the amount of iterations we have evaluated over.
+	
 	while True:
-		if(iterCounter>maxIterations and not stillAboveTolerance(newValueFunction, valueFunction, tol)):
+		if(iterCounter > maxIterations and not inTolerance(newValueFunction, valueFunction, tol)):
 			break
-		#Keeps looping until we have hit the max iteration limit, or until we have converged, and the difference is under the tolerance.
+		# Keeps looping until we have hit the max iteration limit, or until we have converged, and the difference is under the tolerance.
 		iterCounter += 1
 		valueFunction = newValueFunction.copy()
 		#For each state.
 		for s in range(nS):
-			result = P[s][policy[s]] #Retrieves the possibilities
-			newValueFunction[s] = np.array(result)[:,2].mean()#Retrieves mean reward.
-			#For each possibility
-			for num in range(len(result)):
-				(probability, nextstate, reward, terminal) = result[num]
-				newValueFunction[s] += (gamma * probability * valueFunction[nextstate]) #Updates the new value for state, s.
-	############################
+			r = P[s][policy[s]] #Retrieves the possibilities
+			newValueFunction[s] = getAverageR(r)#Retrieves mean reward.
+			rLength = len(r)
+            #For each possibility
+			for j in range(rLength):
+				(prob, nextState, reward, terminal) = r[j]
+				newValueFunction[s] += (gamma * prob * valueFunction[nextState]) #Updates the new value for state, s.
+
 	return newValueFunction
 
-def stillAboveTolerance(newValueFunction, oldValueFunction, tolerance):
-	"""Returns  true if the differnece between the two value functions is above the tolerance.
+def getAverageR(r):
+    """
+    Returns average result
+    """
+    return np.array(r)[:,2].mean()
+
+def inTolerance(newFunction, oldFunction, tolerance):
+	"""Returns  true if the difference between the two functions is above the tolerance.
 		Used to check if the difference has fallen below the tolerance.
 
 	Returns
 	-------
-	StillAboveTolerance: boolean
+	inTolerance: boolean
 		True if the differnce between the two value functions is above the tolerance, false otherwise.
 	"""
-	return np.sum(newValueFunction-oldValueFunction)>tolerance
+	return np.sum(newFunction-oldFunction) > tolerance
 
 def policy_improvement(P, nS, nA, value_from_policy, policy, gamma=0.9):
 	"""Given the value function from policy improve the policy.
@@ -109,22 +116,20 @@ def policy_improvement(P, nS, nA, value_from_policy, policy, gamma=0.9):
 
 	newPolicy = np.zeros(nS, dtype='int')
 
-	############################
-	# YOUR IMPLEMENTATION HERE #
 	qFunction = np.zeros([nS,nA])
 	#For each state index.
 	for s in range(nS):
 		#For each action index.
 		for a in range(nA):
-			result = P[s][a] #Retrieves the possbilities for this action.
+			r = P[s][a] #Retrieves the possbilities for this action.
+			rLength = len(r)
 			#For each possibility
-			for num in range(len(result)):
+			for j in range(rLength):
 				#Seperate out each variable.
-				(probability, nextstate, reward, terminal) = result[num]
-				qFunction[s][a] += reward + (gamma*probability*value_from_policy[nextstate]) #Update the q_function value with the new reward value.
+				(prob, nextState, reward, terminal) = r[j]
+				qFunction[s][a] += reward + (gamma * prob * value_from_policy[nextState]) #Update the q_function value with the new reward value.
 	newPolicy = np.argmax(qFunction, axis=1) #Creates a policy from the maximum q_function value.
 
-	############################
 	return newPolicy
 
 
@@ -142,23 +147,25 @@ def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3, i_max=100):
         tol parameter used in policy_evaluation()
     Returns:
     ----------
-    value_function: np.ndarray[nS]
+    valueFunction: np.ndarray[nS]
     policy: np.ndarray[nS]
     """
 
-    value_function = np.zeros(nS)
+    valueFunction = np.zeros(nS)
     policy = np.zeros(nS, dtype=int)
     
     i = 0 
-    new_policy= policy.copy()
-    while i <= i_max or stillAboveTolerance(new_policy, policy, tol):
+    newPolicy= policy.copy()
+    while True:
+        if i > i_max and not inTolerance(newPolicy, policy, tol):
+            break
         i += 1
-        policy = new_policy
-        value_function = policy_evaluation(P, nS, nA, policy)
-        new_policy = policy_improvement(P, nS, nA, value_function, policy)
-    return value_function, policy
+        policy = newPolicy
+        valueFunction = policy_evaluation(P, nS, nA, policy)
+        newPolicy = policy_improvement(P, nS, nA, valueFunction, policy)
+    return valueFunction, policy
 
-def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, i_max=100):
+def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, i_max=50):
     """
     Learn value function and policy by using value iteration method for a given
     gamma and environment.
@@ -169,46 +176,46 @@ def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, i_max=100):
         defined at beginning of file
     tol: float
         Terminate value iteration when
-            max |value_function(s) - prev_value_function(s)| < tol
+            max |valueFunction(s) - prevValueFunction(s)| < tol
     i_max: int
         Maximum number of iterations
     Returns:
     ----------
-    value_function: np.ndarray[nS]
+    valueFunction: np.ndarray[nS]
     policy: np.ndarray[nS]
     """
     
-    value_function = np.zeros(nS)
-    new_value_function = value_function.copy()
+    valueFunction = np.zeros(nS)
+    newValueFunction = valueFunction.copy()
     i = 0
     policy = np.zeros(nS, dtype=int)
 
     while True:
-        if i > i_max and not stillAboveTolerance(new_value_function, value_function, tol):
+        if i > i_max and not inTolerance(newValueFunction, valueFunction, tol):
             break
-        value_function = new_value_function
+        valueFunction = newValueFunction
         i += 1
         # Iterating over every state
         for state in range(nS):
-            r_max = -1
-            a_max = 0
+            rMax = -1
+            aMax = 0
             # Iterating over every action
             for action in range(nA):
                 r = P[state][action]
-                r_current = np.array(r)[:,2].mean()
-                length_r = len(r)
+                rCurrent = getAverageR(r)
+                rLength = len(r)
                 # Iterating over every probabilty
-                for j in range(length_r):
-                    (prob, next_state, reward, terminal) = r[j]
-                    r_current += gamma * prob * value_function[next_state]
-                    if r_current > r_max:
-                        a_max = action
-                        r_max = r_current    
+                for j in range(rLength):
+                    (prob, nextState, reward, terminal) = r[j]
+                    rCurrent += gamma * prob * valueFunction[nextState]
+                    if rCurrent > rMax:
+                        aMax = action
+                        rMax = rCurrent    
 
-            new_value_function[state] = r_max
-            policy[state] = a_max
+            newValueFunction[state] = rMax
+            policy[state] = aMax
 
-    return value_function, policy
+    return valueFunction, policy
 
 def render_single(env, policy, max_steps=100):
   """
