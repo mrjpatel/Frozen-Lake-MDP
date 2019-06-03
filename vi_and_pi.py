@@ -122,7 +122,7 @@ def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3):
     ############################
     return value_function, policy
 
-def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, max_step=20):
+def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, i_max=50):
     """
     Learn value function and policy by using value iteration method for a given
     gamma and environment.
@@ -134,7 +134,7 @@ def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, max_step=20):
     tol: float
         Terminate value iteration when
             max |value_function(s) - prev_value_function(s)| < tol
-    max_step: int
+    i_max: int
         Maximum number of iterations
     Returns:
     ----------
@@ -143,10 +143,11 @@ def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, max_step=20):
     """
     
     value_function = np.zeros(nS)
+    new_value_function = np.zeros(nS)
+    
     policy = np.zeros(nS, dtype=int)
-    new_value_function = value_function.copy()
 
-    for i in range(max_step):
+    for i in range(i_max):
         value_function = new_value_function
         # Iterating over every state
         for state in range(nS):
@@ -169,7 +170,7 @@ def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, max_step=20):
             new_value_function[state] = r_max
             policy[state] = a_max
 
-    return new_value_function, policy
+    return value_function, policy
 
 def render_single(env, policy, max_steps=100):
   """
@@ -214,7 +215,7 @@ if __name__ == "__main__":
 
     print("\n" + "-"*25 + "\nBeginning Value Iteration\n" + "-"*25)
 
-    V_vi, p_vi = value_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3,max_step=20)
+    V_vi, p_vi = value_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3,i_max=50)
     render_single(env, p_vi, 100)
 
 
