@@ -61,21 +61,21 @@ def policy_evaluation(P, nS, nA, policy, gamma=0.9, tol=1e-3):
 	iterCounter = 0 #Counts the amount of iterations we have evaluated over.
 	
 	while True:
+		# Keeps looping until we have hit the max iteration limit, oruntil we have converged, and the difference is under the tolerance.
+		iterCounter += 1
 		if(iterCounter > maxIterations and not inTolerance(newValueFunction, valueFunction, tol)):
 			break
-		# Keeps looping until we have hit the max iteration limit, or until we have converged, and the difference is under the tolerance.
-		iterCounter += 1
 		valueFunction = newValueFunction.copy()
 		#For each state.
 		for s in range(nS):
 			r = P[s][policy[s]] #Retrieves the possibilities
-			newValueFunction[s] = getAverageR(r)#Retrieves mean reward.
+			newValueFunction[s] = getAverageR(r) #Retrieves mean reward.
 			rLength = len(r)
-            #For each possibility
+			#For each possibility
 			for j in range(rLength):
 				(prob, nextState, reward, terminal) = r[j]
 				newValueFunction[s] += (gamma * prob * valueFunction[nextState]) #Updates the new value for state, s.
-
+	#Returns the evaluate value function
 	return newValueFunction
 
 def getAverageR(r):
