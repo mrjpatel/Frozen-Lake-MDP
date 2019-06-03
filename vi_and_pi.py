@@ -6,6 +6,7 @@ import gym
 import time
 import rmit_rl_env
 
+
 np.set_printoptions(precision=3)
 
 """
@@ -120,7 +121,7 @@ def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3):
 	############################
 	return value_function, policy
 
-def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3):
+def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, max=50):
 	"""
 	Learn value function and policy by using value iteration method for a given
 	gamma and environment.
@@ -132,6 +133,8 @@ def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3):
 	tol: float
 		Terminate value iteration when
 			max |value_function(s) - prev_value_function(s)| < tol
+	max: int
+		Maximum iterations
 	Returns:
 	----------
 	value_function: np.ndarray[nS]
@@ -140,11 +143,15 @@ def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3):
 
 	value_function = np.zeros(nS)
 	policy = np.zeros(nS, dtype=int)
-	############################
-	# YOUR IMPLEMENTATION HERE #
 
+	for i in range(max):
+		new_value = np.zero(nS)
+		for state in range(nS):
+			q_values = []
+			for action in range(nA):
+				result = P[state][action]
+				temp = np.array(result)[:,2].mean()
 
-	############################
 	return value_function, policy
 
 def render_single(env, policy, max_steps=100):
@@ -194,7 +201,7 @@ if __name__ == "__main__":
 
 	print("\n" + "-"*25 + "\nBeginning Value Iteration\n" + "-"*25)
 
-	V_vi, p_vi = value_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3)
+	V_vi, p_vi = value_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3, max=50)
 	render_single(env, p_vi, 100)
 
 
