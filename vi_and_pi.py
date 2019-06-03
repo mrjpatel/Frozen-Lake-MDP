@@ -60,17 +60,16 @@ def policy_evaluation(P, nS, nA, policy, gamma=0.9, tol=1e-3):
 	newValueFunction = valueFunction.copy()
 	maxIterations = 100 #The maximum amount of iterations performed before we stop.
 	iterCounter = 0 #Counts the amount of iterations we have evaluated over.
-	#Could change this to a for loop, with a bail for if tolerance falls below threshold?
-	while iterCounter<=maxIterations or stillAboveTolerance(newValueFunction, valueFunction, tol):
-	#for i in range(maxIterations):
-	#	if(
+	while True:
+		if(iterCounter>maxIterations and not stillAboveTolerance(newValueFunction, valueFunction, tol)):
+			break
 		#Keeps looping until we have hit the max iteration limit, or until we have converged, and the difference is under the tolerance.
 		iterCounter += 1
 		valueFunction = newValueFunction.copy()
 		#For each state.
 		for s in range(nS):
 			result = P[s][policy[s]] #Retrieves the possibilities
-			newValueFunction[s] = np.array(result)[:,2].mean()
+			newValueFunction[s] = np.array(result)[:,2].mean()#Retrieves mean reward.
 			#For each possibility
 			for num in range(len(result)):
 				(probability, nextstate, reward, terminal) = result[num]
