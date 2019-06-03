@@ -1,4 +1,7 @@
-### MDP Value Iteration and Policy Iteration
+###
+# Japan Patel - s3595854 | Joshua Coombes Hall - s3589479
+####
+## MDP Value Iteration and Policy Iteration
 ### Acknowledgement: start-up codes were adapted with permission from Prof. Emma Brunskill of Stanford University
 
 import numpy as np
@@ -133,7 +136,7 @@ def policy_improvement(P, nS, nA, value_from_policy, policy, gamma=0.9):
 	return newPolicy
 
 
-def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3, i_max=100):
+def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3):
     """Runs policy iteration.
 
     You should call the policy_evaluation() and policy_improvement() methods to
@@ -154,6 +157,7 @@ def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3, i_max=100):
     valueFunction = np.zeros(nS)
     policy = np.zeros(nS, dtype=int)
     
+    i_max = 100
     i = 0 
     newPolicy= policy.copy()
     while True:
@@ -165,7 +169,7 @@ def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3, i_max=100):
         newPolicy = policy_improvement(P, nS, nA, valueFunction, policy)
     return valueFunction, policy
 
-def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, i_max=50):
+def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3):
     """
     Learn value function and policy by using value iteration method for a given
     gamma and environment.
@@ -177,8 +181,6 @@ def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, i_max=50):
     tol: float
         Terminate value iteration when
             max |valueFunction(s) - prevValueFunction(s)| < tol
-    i_max: int
-        Maximum number of iterations
     Returns:
     ----------
     valueFunction: np.ndarray[nS]
@@ -188,6 +190,7 @@ def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, i_max=50):
     valueFunction = np.zeros(nS)
     newValueFunction = valueFunction.copy()
     i = 0
+    i_max = 100
     policy = np.zeros(nS, dtype=int)
 
     while True:
@@ -255,12 +258,12 @@ if __name__ == "__main__":
 
     print("\n" + "-"*25 + "\nBeginning Policy Iteration\n" + "-"*25)
 
-    V_pi, p_pi = policy_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3, i_max=20)
+    V_pi, p_pi = policy_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3)
     render_single(env, p_pi, 100)
 
     print("\n" + "-"*25 + "\nBeginning Value Iteration\n" + "-"*25)
 
-    V_vi, p_vi = value_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3,i_max=100)
+    V_vi, p_vi = value_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3)
     render_single(env, p_vi, 100)
 
 
