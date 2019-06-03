@@ -56,24 +56,24 @@ def policy_evaluation(P, nS, nA, policy, gamma=0.9, tol=1e-3):
 
 	############################
 	# YOUR IMPLEMENTATION HERE #
-	value_function = np.zeros(nS)
-	new_value_function = value_function.copy()
-	max_iteration = 100
+	valueFunction = np.zeros(nS)
+	newValueFunction = valueFunction.copy()
+	maxIterations = 100
 	iterCounter = 0 #Counts the amount of iterations we have evaluated over.
-	while iterCounter<=max_iteration or getValueFunctionDiff(new_value_function, value_function)>tol:
+	while iterCounter<=maxIterations or getValueFunctionDiff(newValueFunction, valueFunction)>tol:
 		#Keeps looping until we have hit the max iteration limit, or until we have converged, and the difference is under the tolerance.
 		iterCounter += 1
-		value_function = new_value_function.copy()
+		valueFunction = newValueFunction.copy()
 		#For each state.
 		for s in range(nS):
 			result = P[s][policy[s]] #Retrieves the possibilities
-			new_value_function[s] = np.array(result)[:,2].mean()
+			newValueFunction[s] = np.array(result)[:,2].mean()
 			#For each possibility
 			for num in range(len(result)):
 				(probability, nextstate, reward, terminal) = result[num]
-				new_value_function[s] += (gamma * probability * value_function[nextstate]) #Updates the new value for state, s.
+				newValueFunction[s] += (gamma * probability * valueFunction[nextstate]) #Updates the new value for state, s.
 	############################
-	return new_value_function
+	return newValueFunction
 
 def getValueFunctionDiff(newValueFunction, oldValueFunction):
 	"""Returns the difference betwene the two value functions.
@@ -84,7 +84,7 @@ def getValueFunctionDiff(newValueFunction, oldValueFunction):
 	value_function_difference: float
 		The difference between the two value functions.
 	"""
-	return np.sum(np.sqrt(np.square(new_value_function-value_function)))
+	return np.sum(np.sqrt(np.square(newValueFunction-oldValueFunction)))
 
 def policy_improvement(P, nS, nA, value_from_policy, policy, gamma=0.9):
 	"""Given the value function from policy improve the policy.
