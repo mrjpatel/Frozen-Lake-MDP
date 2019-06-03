@@ -58,8 +58,9 @@ def policy_evaluation(P, nS, nA, policy, gamma=0.9, tol=1e-3):
 	# YOUR IMPLEMENTATION HERE #
 	valueFunction = np.zeros(nS)
 	newValueFunction = valueFunction.copy()
-	maxIterations = 100
+	maxIterations = 100 #The maximum amount of iterations performed before we stop.
 	iterCounter = 0 #Counts the amount of iterations we have evaluated over.
+	#Could change this to a for loop, with a bail for if tolerance falls below threshold?
 	while iterCounter<=maxIterations or getValueFunctionDiff(newValueFunction, valueFunction)>tol:
 		#Keeps looping until we have hit the max iteration limit, or until we have converged, and the difference is under the tolerance.
 		iterCounter += 1
@@ -84,7 +85,7 @@ def getValueFunctionDiff(newValueFunction, oldValueFunction):
 	value_function_difference: float
 		The difference between the two value functions.
 	"""
-	return np.sum(np.sqrt(np.square(newValueFunction-oldValueFunction)))
+	return np.sum(newValueFunction-oldValueFunction)
 
 def policy_improvement(P, nS, nA, value_from_policy, policy, gamma=0.9):
 	"""Given the value function from policy improve the policy.
