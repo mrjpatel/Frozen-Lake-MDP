@@ -36,23 +36,23 @@ the parameters P, nS, nA, gamma are defined as follows:
 """
 
 def policy_evaluation(P, nS, nA, policy, gamma=0.9, tol=1e-3):
-    """Evaluate the value function from a given policy.
+	"""Evaluate the value function from a given policy.
 
-    Parameters
-    ----------
-    P, nS, nA, gamma:
-        defined at beginning of file
-    policy: np.array[nS]
-        The policy to evaluate. Maps states to actions.
-    tol: float
-        Terminate policy evaluation when
-            max |value_function(s) - prev_value_function(s)| < tol
-    Returns
-    -------
-    value_function: np.ndarray[nS]
-        The value function of the given policy, where value_function[s] is
-        the value of state s
-    """
+	Parameters
+	----------
+	P, nS, nA, gamma:
+		defined at beginning of file
+	policy: np.array[nS]
+		The policy to evaluate. Maps states to actions.
+	tol: float
+		Terminate policy evaluation when
+		max |value_function(s) - prev_value_function(s)| < tol
+	Returns
+	-------
+	value_function: np.ndarray[nS]
+		The value function of the given policy, where value_function[s] is
+		the value of state s
+	"""
 
 	############################
 	# YOUR IMPLEMENTATION HERE #
@@ -64,10 +64,12 @@ def policy_evaluation(P, nS, nA, policy, gamma=0.9, tol=1e-3):
 		#Keeps looping until we have hit the max iteration limit, or until we have converged, and the difference is under the tolerance.
 		iterCounter += 1
 		value_function = new_value_function.copy()
-		for s in range(nS): #For each state.
+		#For each state.
+		for s in range(nS):
 			result = P[s][policy[s]] #Retrieves the possibilities
 			new_value_function[s] = np.array(result)[:,2].mean()
-			for num in range(len(result)): #For each possibility
+			#For each possibility
+			for num in range(len(result)):
 				(probability, nextstate, reward, terminal) = result[num]
 				new_value_function[s] += (gamma * probability * value_function[nextstate]) #Updates the new value for state, s.
 	############################
@@ -103,21 +105,25 @@ def policy_improvement(P, nS, nA, value_from_policy, policy, gamma=0.9):
         given value function.
     """
 
-    new_policy = np.zeros(nS, dtype='int')
+	new_policy = np.zeros(nS, dtype='int')
 
 	############################
 	# YOUR IMPLEMENTATION HERE #
-	q_function = np.zeros([nS,nA])
-	for s in range(nS): #For each state index.
-		for a in range(nA): #For each action index.
+	qFunction = np.zeros([nS,nA])
+	#For each state index.
+	for s in range(nS):
+		#For each action index.
+		for a in range(nA):
 			result = P[s][a] #Retrieves the possbilities for this action.
-			for num in range(len(result)): #For each possibility
+			#For each possibility
+			for num in range(len(result)):
+				#Seperate out each variable.
 				(probability, nextstate, reward, terminal) = result[num]
-				q_function[s][a] += reward + (gamma*probability*value_from_policy[nextstate]) #Update the q_function value with the new reward value.
-	new_policy = np.argmax(q_function, axis=1) #Creates a policy from the maximum q_function value.
+				qFunction[s][a] += reward + (gamma*probability*value_from_policy[nextstate]) #Update the q_function value with the new reward value.
+	new_policy = np.argmax(qFunction, axis=1) #Creates a policy from the maximum q_function value.
 
-    ############################
-    return new_policy
+	############################
+	return new_policy
 
 
 def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3):
