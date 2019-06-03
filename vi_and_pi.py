@@ -105,7 +105,7 @@ def policy_improvement(P, nS, nA, value_from_policy, policy, gamma=0.9):
         given value function.
     """
 
-	new_policy = np.zeros(nS, dtype='int')
+	newPolicy = np.zeros(nS, dtype='int')
 
 	############################
 	# YOUR IMPLEMENTATION HERE #
@@ -120,10 +120,10 @@ def policy_improvement(P, nS, nA, value_from_policy, policy, gamma=0.9):
 				#Seperate out each variable.
 				(probability, nextstate, reward, terminal) = result[num]
 				qFunction[s][a] += reward + (gamma*probability*value_from_policy[nextstate]) #Update the q_function value with the new reward value.
-	new_policy = np.argmax(qFunction, axis=1) #Creates a policy from the maximum q_function value.
+	newPolicy = np.argmax(qFunction, axis=1) #Creates a policy from the maximum q_function value.
 
 	############################
-	return new_policy
+	return newPolicy
 
 
 def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3, i_max=100):
