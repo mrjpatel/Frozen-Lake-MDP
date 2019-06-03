@@ -61,7 +61,9 @@ def policy_evaluation(P, nS, nA, policy, gamma=0.9, tol=1e-3):
 	maxIterations = 100 #The maximum amount of iterations performed before we stop.
 	iterCounter = 0 #Counts the amount of iterations we have evaluated over.
 	#Could change this to a for loop, with a bail for if tolerance falls below threshold?
-	while iterCounter<=maxIterations or getValueFunctionDiff(newValueFunction, valueFunction)>tol:
+	while iterCounter<=maxIterations or stillAboveTolerance(newValueFunction, valueFunction, tol):
+	#for i in range(maxIterations):
+	#	if(
 		#Keeps looping until we have hit the max iteration limit, or until we have converged, and the difference is under the tolerance.
 		iterCounter += 1
 		valueFunction = newValueFunction.copy()
@@ -76,16 +78,16 @@ def policy_evaluation(P, nS, nA, policy, gamma=0.9, tol=1e-3):
 	############################
 	return newValueFunction
 
-def getValueFunctionDiff(newValueFunction, oldValueFunction):
-	"""Returns the difference betwene the two value functions.
+def stillAboveTolerance(newValueFunction, oldValueFunction, tolerance):
+	"""Returns  true if the differnece between the two value functions is above the tolerance.
 		Used to check if the difference has fallen below the tolerance.
 
 	Returns
 	-------
-	value_function_difference: float
-		The difference between the two value functions.
+	StillAboveTolerance: boolean
+		True if the differnce between the two value functions is above the tolerance, false otherwise.
 	"""
-	return np.sum(newValueFunction-oldValueFunction)
+	return np.sum(newValueFunction-oldValueFunction)>tolerance
 
 def policy_improvement(P, nS, nA, value_from_policy, policy, gamma=0.9):
 	"""Given the value function from policy improve the policy.
@@ -150,7 +152,7 @@ def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3, i_max=100):
     
     i = 0 
     new_policy= policy.copy()
-    while i <= i_max or getValueFunctionDiff(new_policy, policy) > tol:
+    while i <= i_max or stillAboveTolerance(new_policy, policy, tol):
         i += 1
         policy = new_policy
         value_function = policy_evaluation(P, nS, nA, policy)
@@ -247,7 +249,7 @@ if __name__ == "__main__":
 
     print("\n" + "-"*25 + "\nBeginning Value Iteration\n" + "-"*25)
 
-    # V_vi, p_vi = value_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3,i_max=100)
-    # render_single(env, p_vi, 100)
+    V_vi, p_vi = value_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3,i_max=100)
+    render_single(env, p_vi, 100)
 
 
