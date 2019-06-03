@@ -179,10 +179,15 @@ def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, i_max=100):
     """
     
     value_function = np.zeros(nS)
-
+    new_value_function = value_function.copy()
+    i = 0
     policy = np.zeros(nS, dtype=int)
 
-    for i in range(i_max):
+    while True:
+        if i > i_max and not stillAboveTolerance(new_value_function, value_function, tol):
+            break
+        value_function = new_value_function
+        i += 1
         # Iterating over every state
         for state in range(nS):
             r_max = -1
@@ -200,7 +205,7 @@ def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, i_max=100):
                         a_max = action
                         r_max = r_current    
 
-            value_function[state] = r_max
+            new_value_function[state] = r_max
             policy[state] = a_max
 
     return value_function, policy
