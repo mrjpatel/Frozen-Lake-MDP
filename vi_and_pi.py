@@ -127,7 +127,7 @@ def policy_improvement(P, nS, nA, value_from_policy, policy, gamma=0.9):
 	return newPolicy
 
 
-def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3):
+def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3, i_max=100):
     """Runs policy iteration.
 
     You should call the policy_evaluation() and policy_improvement() methods to
@@ -147,12 +147,14 @@ def policy_iteration(P, nS, nA, gamma=0.9, tol=10e-3):
 
     value_function = np.zeros(nS)
     policy = np.zeros(nS, dtype=int)
-
-    ############################
-    # YOUR IMPLEMENTATION HERE #
-
-
-    ############################
+    
+    i = 0 
+    new_policy= policy.copy()
+    while i <= i_max or getValueFunctionDiff(new_policy, policy) > tol:
+        i += 1
+        policy = new_policy
+        value_function = policy_evaluation(P, nS, nA, policy)
+        new_policy = policy_improvement(P, nS, nA, value_function, policy)
     return value_function, policy
 
 def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, i_max=100):
@@ -240,12 +242,12 @@ if __name__ == "__main__":
 
     print("\n" + "-"*25 + "\nBeginning Policy Iteration\n" + "-"*25)
 
-    # V_pi, p_pi = policy_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3)
-    # render_single(env, p_pi, 100)
+    V_pi, p_pi = policy_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3, i_max=20)
+    render_single(env, p_pi, 100)
 
     print("\n" + "-"*25 + "\nBeginning Value Iteration\n" + "-"*25)
 
-    V_vi, p_vi = value_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3,i_max=100)
-    render_single(env, p_vi, 100)
+    # V_vi, p_vi = value_iteration(env.P, env.nS, env.nA, gamma=0.9, tol=1e-3,i_max=100)
+    # render_single(env, p_vi, 100)
 
 
