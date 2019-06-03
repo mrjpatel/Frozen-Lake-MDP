@@ -5,7 +5,9 @@ import numpy as np
 import gym
 import time
 import rmit_rl_env
+import colorama
 
+colorama.init()
 
 np.set_printoptions(precision=3)
 
@@ -144,13 +146,13 @@ def value_iteration(P, nS, nA, gamma=0.9, tol=1e-3, max=50):
 	value_function = np.zeros(nS)
 	policy = np.zeros(nS, dtype=int)
 
-	for i in range(max):
-		new_value = np.zero(nS)
-		for state in range(nS):
-			q_values = []
-			for action in range(nA):
-				result = P[state][action]
-				temp = np.array(result)[:,2].mean()
+	# for i in range(max):
+	# 	new_value = np.zero(nS)
+	# 	for state in range(nS):
+	# 		q_values = []
+	# 		for action in range(nA):
+	# 			result = P[state][action]
+	# 			temp = np.array(result)[:,2].mean()
 
 	return value_function, policy
 
