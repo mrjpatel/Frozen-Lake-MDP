@@ -31,3 +31,9 @@ When you are done, deactivate the environment using the `deactivate` command.
 ```bash
 $ deactivate
 ```
+
+# Run Project
+To tun the project, just run the script as shown below. This has code of value iteration and policy iteration.
+```bash
+$ python vi_and_pi.py
+```
